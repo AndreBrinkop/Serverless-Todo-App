@@ -1,4 +1,4 @@
-import * as AWS from 'aws-sdk'
+const AWSXRay = require('aws-xray-sdk');
 import {DocumentClient} from 'aws-sdk/clients/dynamodb'
 import {TodoItem} from '../../models/TodoItem'
 import {createLogger} from "../../utils/logger";
@@ -7,7 +7,11 @@ import {TodoUpdate} from "../../models/TodoUpdate";
 const logger = createLogger('TodoAccess')
 const bucketName = process.env.BUCKET_NAME
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
-const s3 = new AWS.S3({
+
+// Capture all AWS clients we create
+const AWS = AWSXRay.captureAWS(require('aws-sdk'));
+
+const s3Client = new AWS.S3({
     signatureVersion: 'v4'
 })
 
@@ -80,7 +84,7 @@ export class TodoAccess {
     async createUploadUrl(todoId: string, userId: string): Promise<string> {
         logger.info('Create signed url', todoId)
 
-        const uploadUrl = await s3.getSignedUrl('putObject', {
+        const uploadUrl = await s3Client.getSignedUrl('putObject', {
             Bucket: bucketName,
             Key: todoId,
             Expires: parseInt(urlExpiration)
