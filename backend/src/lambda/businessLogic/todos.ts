@@ -1,7 +1,7 @@
 // import * as uuid from 'uuid'
 
 import { TodoItem } from '../../models/TodoItem'
-import { TodoAccess } from '../dataLayer/todoAccess'
+import { TodoAccess } from '../dataLayer/TodoAccess'
 import {createLogger} from "../../utils/logger";
 // import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 const logger = createLogger('todos')

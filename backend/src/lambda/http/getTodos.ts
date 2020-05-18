@@ -9,7 +9,7 @@ const logger = createLogger('getTodos')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const userId = getUserId(event)
-    logger.info("Get all TODOs for user.", {"userId": userId})
+    logger.info("Get all Todo Items for user event.", {"event": event})
 
     const items = await getAllTodoItemsForUser(userId)
     return {
