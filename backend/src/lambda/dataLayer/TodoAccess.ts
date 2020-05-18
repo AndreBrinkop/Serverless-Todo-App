@@ -1,6 +1,6 @@
-import * as AWS  from 'aws-sdk'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { TodoItem } from '../../models/TodoItem'
+import * as AWS from 'aws-sdk'
+import {DocumentClient} from 'aws-sdk/clients/dynamodb'
+import {TodoItem} from '../../models/TodoItem'
 import {createLogger} from "../../utils/logger";
 import {TodoUpdate} from "../../models/TodoUpdate";
 
@@ -48,15 +48,28 @@ export class TodoAccess {
                 'todoId': todoId
             },
             UpdateExpression: 'set #name_field= :name, dueDate = :dueDate, done = :done',
-            ExpressionAttributeNames:{
+            ExpressionAttributeNames: {
                 "#name_field": "name"
             },
             ExpressionAttributeValues: {
-                ':name' : todoItem.name,
-                ':dueDate' : todoItem.dueDate,
-                ':done' : todoItem.done,
+                ':name': todoItem.name,
+                ':dueDate': todoItem.dueDate,
+                ':done': todoItem.done
             }
         }).promise();
+    }
+
+    async deleteTodoItem(todoId: string, userId: string): Promise<void> {
+        logger.info("Delete Todo Item.", {"todoId": todoId, "userId": userId});
+
+        await this.docClient
+            .delete({
+                TableName: this.todoItemsTable,
+                Key: {
+                    'userId': userId,
+                    'todoId': todoId
+                }
+            }).promise();
     }
 }
 

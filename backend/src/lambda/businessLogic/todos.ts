@@ -34,3 +34,8 @@ export async function createTodoItem(todoItem: CreateTodoRequest, userId: string
      const todoUpdate: TodoUpdate = updateTodoRequest as TodoUpdate
      await todoAccess.updateTodoItem(todoUpdate, todoId, userId)
  }
+
+ export async function deleteTodoItem(todoId: string, userId: string): Promise<void> {
+     logger.info('Delete Todo Item.', {"todoId": todoId, "userId": userId})
+     await todoAccess.deleteTodoItem(todoId, userId)
+ }
