@@ -79,6 +79,12 @@ export class TodoAccess {
                     'todoId': todoId
                 }
             }).promise();
+
+        logger.info("Delete Todo Attachment.", {"bucketName": bucketName, "todoId": todoId});
+        await s3Client.deleteObject({
+            Bucket: bucketName,
+            Key: todoId
+        }).promise()
     }
 
     async createUploadUrl(todoId: string, userId: string): Promise<string> {

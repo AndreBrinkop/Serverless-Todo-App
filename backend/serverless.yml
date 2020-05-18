@@ -98,6 +98,10 @@ functions:
         Action:
           - dynamodb:DeleteItem
         Resource: !GetAtt TodosTable.Arn
+      - Effect: Allow
+        Action:
+          - s3:DeleteObject
+        Resource: arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*
 
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
@@ -111,7 +115,7 @@ functions:
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - s3:*
+          - s3:PutObject
         Resource: arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*
       - Effect: Allow
         Action:
@@ -147,6 +151,7 @@ resources:
                 - '*'
               AllowedMethods:
                 - PUT
+                - GET
               MaxAge: 3000
     AttachmentBucketPolicy:
       Type: AWS::S3::BucketPolicy
