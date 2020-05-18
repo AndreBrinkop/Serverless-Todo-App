@@ -43,6 +43,9 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
+          request:
+            schema:
+              application/json: ${file(models/create-todo-item-request.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
