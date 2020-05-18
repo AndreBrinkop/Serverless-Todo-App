@@ -1,4 +1,4 @@
-# Serverless TODO
+# Serverless TODO App
 
 This project contains a simple TODO application using AWS Lambda and Serverless framework. 
 
