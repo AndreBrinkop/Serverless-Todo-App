@@ -52,7 +52,6 @@ functions:
           - dynamodb:PutItem
         Resource: !GetAtt TodosTable.Arn
 
-  # TODO: Configure this function
   UpdateTodo:
     handler: src/lambda/http/updateTodo.handler
     events:
@@ -61,6 +60,14 @@ functions:
           path: todos/{todoId}
           cors: true
           authorizer: Auth
+          request:
+            schema:
+              application/json: ${file(models/update-todo-item-request.json)}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: !GetAtt TodosTable.Arn
 
   # TODO: Configure this function
   DeleteTodo:
