@@ -21,10 +21,10 @@ provider:
 
   tracing: true # enable tracing
   iamRoleStatements:
-    - Effect: "Allow" # xray permissions (required)
+    - Effect: Allow # xray permissions (required)
       Action:
-          - "xray:PutTraceSegments"
-          - "xray:PutTelemetryRecords"
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
       Resource:
           - "*"
 
