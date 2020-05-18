@@ -58,7 +58,7 @@ export const handler = async (
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
   const token = getToken(authHeader)
   const jwt: Jwt = decode(token, { complete: true }) as Jwt
-  const pubKey = await gerPublicKey(jwt.header.kid)
+  const pubKey = await getPublicKey(jwt.header.kid)
 
   logger.info('Verify JWT Token', {"jwtToken": jwt, "pubKey": pubKey})
   return verify(token, pubKey, {
@@ -76,7 +76,7 @@ function getToken(authHeader: string): string {
   return split[1]
 }
 
-async function gerPublicKey(kid): Promise<string> {
+async function getPublicKey(kid): Promise<string> {
   if (pubKey)
     return pubKey;
 
