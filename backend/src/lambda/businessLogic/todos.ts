@@ -39,3 +39,8 @@ export async function createTodoItem(todoItem: CreateTodoRequest, userId: string
      logger.info('Delete Todo Item.', {"todoId": todoId, "userId": userId})
      await todoAccess.deleteTodoItem(todoId, userId)
  }
+
+ export async function createUploadUrl(todoId: string, userId: string): Promise<string> {
+     logger.info('Create Upload Url.', {"todoId": todoId, "userId": userId})
+     return await todoAccess.createUploadUrl(todoId, userId)
+ }

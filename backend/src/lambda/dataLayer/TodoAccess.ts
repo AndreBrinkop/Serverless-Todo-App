@@ -5,6 +5,11 @@ import {createLogger} from "../../utils/logger";
 import {TodoUpdate} from "../../models/TodoUpdate";
 
 const logger = createLogger('TodoAccess')
+const bucketName = process.env.BUCKET_NAME
+const urlExpiration = process.env.SIGNED_URL_EXPIRATION
+const s3 = new AWS.S3({
+    signatureVersion: 'v4'
+})
 
 export class TodoAccess {
 
@@ -70,6 +75,34 @@ export class TodoAccess {
                     'todoId': todoId
                 }
             }).promise();
+    }
+
+    async createUploadUrl(todoId: string, userId: string): Promise<string> {
+        logger.info('Create signed url', todoId)
+
+        const uploadUrl = await s3.getSignedUrl('putObject', {
+            Bucket: bucketName,
+            Key: todoId,
+            Expires: parseInt(urlExpiration)
+        })
+
+        // remove signing parameters
+        const downloadUrl = uploadUrl.split("?")[0]
+        logger.info('Created signed url', {"signedUploadUrl": uploadUrl, "downloadUrl": downloadUrl})
+
+        await this.docClient.update({
+            TableName: this.todoItemsTable,
+            Key: {
+                'userId': userId,
+                'todoId': todoId
+            },
+            UpdateExpression: 'set attachmentUrl = :attachmentUrl',
+            ExpressionAttributeValues: {
+                ':attachmentUrl': downloadUrl
+            }
+        }).promise();
+
+        return uploadUrl
     }
 }
 
