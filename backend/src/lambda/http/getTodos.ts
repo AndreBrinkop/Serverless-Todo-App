@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import {getUserId} from "../utils";
 import {createLogger} from "../../utils/logger";
-import {getAllTodoItemsForUser} from "../businessLogic/todos";
+import {getAllTodoItemsForUser} from "../../businessLogic/todos";
 
 const logger = createLogger('getTodos')
 

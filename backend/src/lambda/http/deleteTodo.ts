@@ -4,7 +4,7 @@ const logger = createLogger('deleteTodo')
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import {createLogger} from "../../utils/logger";
 import {getUserId} from "../utils";
-import {deleteTodoItem} from "../businessLogic/todos";
+import {deleteTodoItem} from "../../businessLogic/todos";
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const userId = getUserId(event)

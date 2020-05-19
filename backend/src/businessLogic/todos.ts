@@ -1,11 +1,11 @@
- import * as uuid from 'uuid'
+import * as uuid from 'uuid'
 
-import { TodoItem } from '../../models/TodoItem'
+import { TodoItem } from '../models/TodoItem'
 import { TodoAccess } from '../dataLayer/TodoAccess'
-import { createLogger } from "../../utils/logger";
-import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
- import {UpdateTodoRequest} from "../../requests/UpdateTodoRequest";
- import {TodoUpdate} from "../../models/TodoUpdate";
+import { createLogger } from "../utils/logger";
+import { CreateTodoRequest } from '../requests/CreateTodoRequest'
+import {UpdateTodoRequest} from "../requests/UpdateTodoRequest";
+import {TodoUpdate} from "../models/TodoUpdate";
 const logger = createLogger('todos')
 
 const todoAccess = new TodoAccess()
@@ -38,9 +38,18 @@ export async function createTodoItem(todoItem: CreateTodoRequest, userId: string
  export async function deleteTodoItem(todoId: string, userId: string): Promise<void> {
      logger.info('Delete Todo Item.', {"todoId": todoId, "userId": userId})
      await todoAccess.deleteTodoItem(todoId, userId)
+     await todoAccess.deleteTodoItemAttachment(todoId)
  }
 
  export async function createUploadUrl(todoId: string, userId: string): Promise<string> {
      logger.info('Create Upload Url.', {"todoId": todoId, "userId": userId})
-     return await todoAccess.createUploadUrl(todoId, userId)
+     const uploadUrl = await todoAccess.createUploadUrl(todoId)
+
+     // remove signing parameters
+     const downloadUrl = uploadUrl.split("?")[0]
+     logger.info('Created signed url', {"signedUploadUrl": uploadUrl, "downloadUrl": downloadUrl})
+
+     await todoAccess.updateAttachmentUrl(todoId, userId, downloadUrl)
+
+     return uploadUrl
  }

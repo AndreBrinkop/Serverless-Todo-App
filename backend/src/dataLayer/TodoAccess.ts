@@ -1,8 +1,8 @@
 const AWSXRay = require('aws-xray-sdk');
 import {DocumentClient} from 'aws-sdk/clients/dynamodb'
-import {TodoItem} from '../../models/TodoItem'
-import {createLogger} from "../../utils/logger";
-import {TodoUpdate} from "../../models/TodoUpdate";
+import {TodoItem} from '../models/TodoItem'
+import {createLogger} from "../utils/logger";
+import {TodoUpdate} from "../models/TodoUpdate";
 
 const logger = createLogger('TodoAccess')
 const bucketName = process.env.BUCKET_NAME
@@ -79,7 +79,9 @@ export class TodoAccess {
                     'todoId': todoId
                 }
             }).promise();
+    }
 
+    async deleteTodoItemAttachment(todoId: string): Promise<void> {
         logger.info("Delete Todo Attachment.", {"bucketName": bucketName, "todoId": todoId});
         await s3Client.deleteObject({
             Bucket: bucketName,
@@ -87,19 +89,17 @@ export class TodoAccess {
         }).promise()
     }
 
-    async createUploadUrl(todoId: string, userId: string): Promise<string> {
+    async createUploadUrl(todoId: string): Promise<string> {
         logger.info('Create signed url', todoId)
 
-        const uploadUrl = await s3Client.getSignedUrl('putObject', {
+        return s3Client.getSignedUrl('putObject', {
             Bucket: bucketName,
             Key: todoId,
             Expires: parseInt(urlExpiration)
         })
+    }
 
-        // remove signing parameters
-        const downloadUrl = uploadUrl.split("?")[0]
-        logger.info('Created signed url', {"signedUploadUrl": uploadUrl, "downloadUrl": downloadUrl})
-
+    async updateAttachmentUrl(todoId: string, userId: string, attachmentUrl: string): Promise<void> {
         await this.docClient.update({
             TableName: this.todoItemsTable,
             Key: {
@@ -108,11 +108,9 @@ export class TodoAccess {
             },
             UpdateExpression: 'set attachmentUrl = :attachmentUrl',
             ExpressionAttributeValues: {
-                ':attachmentUrl': downloadUrl
+                ':attachmentUrl': attachmentUrl
             }
         }).promise();
-
-        return uploadUrl
     }
 }
 
